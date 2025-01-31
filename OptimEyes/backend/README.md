@@ -1,4 +1,4 @@
-# 📌 OptimEyes - Backend
+# 👀 OptimEyes - Backend
 
 Bienvenue dans le backend de **OptimEyes**, l'application de test et d'achat de lunettes en ligne. Ce backend gère l'authentification, les catalogues de lunettes, les commandes, et inclut un chatbot intelligent.
 
