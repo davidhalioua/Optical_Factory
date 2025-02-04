@@ -22,6 +22,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/glasses', glassRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/glasses', glassRoutes);
 
 // Serveur
 const PORT = process.env.PORT || 5000;

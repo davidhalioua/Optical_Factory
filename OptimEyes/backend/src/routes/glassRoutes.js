@@ -4,7 +4,8 @@ import {
     getAllGlasses,
     getGlassById,
     updateGlass,
-    deleteGlass
+    deleteGlass,
+    getRecommendations // Ajout de l'import pour éviter l'erreur
 } from '../controllers/glassController.js';
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.post('/', addGlass);
 
 // Récupérer toutes les lunettes
 router.get('/', getAllGlasses);
+
+// Obtenir des recommandations de lunettes en fonction du profil utilisateur
+router.post('/recommendations', getRecommendations);
 
 // Récupérer une seule lunette par ID
 router.get('/:id', getGlassById);

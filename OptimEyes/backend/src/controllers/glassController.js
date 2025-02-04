@@ -3,10 +3,10 @@ import Glass from '../models/Glass.js';
 // ✅ Ajouter une nouvelle lunette
 export const addGlass = async (req, res) => {
     try {
-        const { name, brand, price, description, stock } = req.body;
+        const { name, brand, price, description, stock, imageUrl, frameType, material, category, gender, recommendedAge } = req.body;
 
-        if (!name || !brand || !price || !description || !stock) {
-            return res.status(400).json({ message: 'Tous les champs sont obligatoires' });
+        if (!name || !brand || !price || !description || !stock || !category) {
+            return res.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis' });
         }
 
         const glass = await Glass.create({
@@ -14,7 +14,13 @@ export const addGlass = async (req, res) => {
             brand,
             price,
             description,
-            stock
+            stock,
+            imageUrl,
+            frameType,
+            material,
+            category,
+            gender,
+            recommendedAge
         });
 
         res.status(201).json(glass);
@@ -51,7 +57,7 @@ export const getGlassById = async (req, res) => {
 // ✅ Mettre à jour une lunette
 export const updateGlass = async (req, res) => {
     try {
-        const { name, brand, price, description, stock } = req.body;
+        const { name, brand, price, description, stock, imageUrl, frameType, material, category, gender, recommendedAge } = req.body;
 
         const glass = await Glass.findById(req.params.id);
 
@@ -64,6 +70,12 @@ export const updateGlass = async (req, res) => {
         glass.price = price || glass.price;
         glass.description = description || glass.description;
         glass.stock = stock || glass.stock;
+        glass.imageUrl = imageUrl || glass.imageUrl;
+        glass.frameType = frameType || glass.frameType;
+        glass.material = material || glass.material;
+        glass.category = category || glass.category;
+        glass.gender = gender || glass.gender;
+        glass.recommendedAge = recommendedAge || glass.recommendedAge;
 
         const updatedGlass = await glass.save();
         res.json(updatedGlass);
@@ -83,6 +95,37 @@ export const deleteGlass = async (req, res) => {
 
         await glass.deleteOne();
         res.json({ message: "Lunette supprimée avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// ✅ Obtenir des recommandations de lunettes en fonction du profil utilisateur
+export const getRecommendations = async (req, res) => {
+    try {
+        const { gender, age, category } = req.body;
+
+        let query = {};
+
+        // Filtrer par genre si renseigné
+        if (gender) {
+            query.gender = { $in: ["Mixte", gender] };
+        }
+
+        // Filtrer par âge si renseigné
+        if (age) {
+            query.recommendedAge = { $lte: age }; // Prend les lunettes adaptées à l'âge
+        }
+
+        // Filtrer par catégorie (sport, repos, natation...)
+        if (category) {
+            query.category = category;
+        }
+
+        // Recherche des lunettes correspondantes
+        const recommendedGlasses = await Glass.find(query).limit(5);
+
+        res.json(recommendedGlasses);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
