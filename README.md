@@ -1,6 +1,6 @@
 # 👀 OptimEyes - Backend
 
-Bienvenue dans le backend de **OptimEyes**, l'application de test et d'achat de lunettes en ligne. Ce backend gère l'authentification, les catalogues de lunettes, les commandes, et inclut un chatbot intelligent.
+Bienvenue dans le backend de **OptimEyes**, l'application de test et d'achat de lunettes en ligne. Ce backend gère l'authentification, les catalogues de lunettes, les commandes, les recommandations personnalisées et inclut un chatbot intelligent.
 
 ## 🚀 Technologies utilisées
 - **Node.js** avec **Express.js** pour le serveur
@@ -12,6 +12,7 @@ Bienvenue dans le backend de **OptimEyes**, l'application de test et d'achat de 
 ---
 
 ## 📌 Installation et Configuration
+
 ### 1️⃣ Prérequis
 Avant de commencer, assure-toi d'avoir :
 - Node.js installé (`>= 16.x`)
@@ -23,10 +24,7 @@ Clone le projet et installe les dépendances :
 ```sh
 # Cloner le repo
 git clone https://github.com/ton_repo/OptimEyes.git
-cd OptimEyes/Backend
-
-# Installer les dépendances
-npm install
+cd OptimEyes/backend
 
 # Installer les dépendances
 npm install
@@ -66,6 +64,37 @@ Le serveur est accessible sur **http://localhost:5000**.
 | `PUT`  | `/api/glasses/:id` | Modifier une lunette (Admin) |
 | `DELETE`  | `/api/glasses/:id` | Supprimer une lunette (Admin) |
 
+### 🔎 Recommandations de Lunettes
+| Méthode | Endpoint | Description |
+|---------|---------|-------------|
+| `POST`  | `/api/glasses/recommendations` | Obtenir des recommandations personnalisées selon l'âge, le genre et l'utilisation |
+
+#### Exemples de requête :
+```json
+{
+  "gender": "Homme",
+  "age": 30,
+  "category": "Repos"
+}
+```
+#### Réponse attendue :
+```json
+[
+  {
+    "_id": "67a2996f02dc0dbeb000c3af",
+    "name": "Lunettes de repos",
+    "brand": "Ray-Ban",
+    "price": 120.99,
+    "description": "Lunettes idéales pour soulager la fatigue oculaire.",
+    "stock": 15,
+    "imageUrl": "https://example.com/rayban_repos.jpg",
+    "frameType": "Rectangulaire",
+    "material": "Métal",
+    "category": "Repos"
+  }
+]
+```
+
 ### 📦 Commandes
 | Méthode | Endpoint | Description |
 |---------|---------|-------------|
@@ -86,7 +115,7 @@ Le serveur est accessible sur **http://localhost:5000**.
 ## 🏗️ Utilisation pour le Frontend
 Le frontend peut interagir avec l'API en utilisant **Axios** ou **Fetch**.
 
-Exemple : Connexion utilisateur avec Axios :
+### 📌 Exemple : Connexion utilisateur avec Axios :
 ```javascript
 axios.post('http://localhost:5000/api/users/login', {
   email: 'john@example.com',
@@ -96,9 +125,24 @@ axios.post('http://localhost:5000/api/users/login', {
 });
 ```
 
-Exemple : Récupérer les lunettes :
+### 📌 Exemple : Récupérer les lunettes :
 ```javascript
 fetch('http://localhost:5000/api/glasses')
+  .then(res => res.json())
+  .then(data => console.log(data));
+```
+
+### 📌 Exemple : Demander des recommandations :
+```javascript
+fetch('http://localhost:5000/api/glasses/recommendations', {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    gender: "Femme",
+    age: 25,
+    category: "Solaire"
+  })
+})
   .then(res => res.json())
   .then(data => console.log(data));
 ```
@@ -107,15 +151,19 @@ fetch('http://localhost:5000/api/glasses')
 
 ## 📌 Tests avec Postman
 Voici les principales requêtes à tester :
-1️⃣ **Créer un utilisateur** ➜ `POST /api/users/register`
-2️⃣ **Se connecter** ➜ `POST /api/users/login`
-3️⃣ **Récupérer la liste des lunettes** ➜ `GET /api/glasses`
-4️⃣ **Passer une commande** ➜ `POST /api/orders`
-5️⃣ **Envoyer un message au chatbot** ➜ `POST /api/chat`
+1️⃣ **Créer un utilisateur** ➜ `POST /api/users/register`  
+2️⃣ **Se connecter** ➜ `POST /api/users/login`  
+3️⃣ **Récupérer la liste des lunettes** ➜ `GET /api/glasses`  
+4️⃣ **Passer une commande** ➜ `POST /api/orders`  
+5️⃣ **Demander des recommandations** ➜ `POST /api/glasses/recommendations`  
+6️⃣ **Envoyer un message au chatbot** ➜ `POST /api/chat`  
 
 ---
 
 ## ✅ TODO & Améliorations
-✔ Ajouter des rôles utilisateur (Admin / Client)
-✔ Intégrer Stripe pour le paiement en ligne
-✔ Ajouter des WebSockets pour les notifications
+✔ Ajouter des rôles utilisateur (Admin / Client)  
+✔ Intégrer Stripe pour le paiement en ligne  
+✔ Ajouter des WebSockets pour les notifications  
+✔ Améliorer le moteur de recommandations avec IA  
+
+---
