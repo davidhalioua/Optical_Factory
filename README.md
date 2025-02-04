@@ -119,8 +119,3 @@ Voici les principales requêtes à tester :
 ✔ Ajouter des rôles utilisateur (Admin / Client)
 ✔ Intégrer Stripe pour le paiement en ligne
 ✔ Ajouter des WebSockets pour les notifications
-
----
-
-## 🎯 Conclusion
-Ce backend est conçu pour être **sécurisé, rapide et évolutif**. Si tu rencontres un problème, n'hésite pas à ouvrir une **issue** sur le repo GitHub ! 🚀
