@@ -6,6 +6,8 @@ import userRoutes from './routes/userRoutes.js';
 import glassRoutes from './routes/glassRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/glasses', glassRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/glasses', glassRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Serveur
 const PORT = process.env.PORT || 5000;

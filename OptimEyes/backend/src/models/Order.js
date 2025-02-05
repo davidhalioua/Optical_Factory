@@ -10,7 +10,10 @@ const orderSchema = mongoose.Schema(
             }
         ],
         totalPrice: { type: Number, required: true },
-        status: { type: String, enum: ['En cours', 'Expédiée', 'Livrée'], default: 'En cours' }
+        status: { type: String, enum: ['En attente de paiement', 'Payée', 'Expédiée', 'Annulée'], default: 'En attente de paiement' },
+        paymentMethod: { type: String, enum: ['Stripe', 'PayPal'], required: true },
+        isPaid: { type: Boolean, default: false },
+        paidAt: { type: Date }
     },
     { timestamps: true }
 );
