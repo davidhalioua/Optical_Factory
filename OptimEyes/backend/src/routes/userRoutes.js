@@ -10,6 +10,12 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+router.get("/test", (req, res) => {
+    res.json({ message: "Test réussi" });
+  });
+  
+  
+
 // Route pour récupérer tous les utilisateurs
 router.get('/', getAllUsers);
 
