@@ -1,7 +1,3 @@
-Voici un **README complet** qui documente **tout ton backend**, y compris **l’installation, les API, l’authentification JWT, les recommandations, et le chatbot avec l’IA DeepSeek**. Tu peux le copier-coller dans ton fichier **`README.md`**.  
-
----
-
 ### **OptimEyes - Backend**
 Backend du projet **OptimEyes**, une plateforme de test et d'achat de lunettes en ligne.
 
