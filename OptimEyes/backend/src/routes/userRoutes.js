@@ -10,25 +10,19 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get("/test", (req, res) => {
-    res.json({ message: "Test réussi" });
-  });
-  
-  
-
-// Route pour récupérer tous les utilisateurs
+// ✅ Route pour récupérer tous les utilisateurs (Admin seulement à l'avenir)
 router.get('/', getAllUsers);
 
-// Route d'inscription
+// ✅ Route d'inscription
 router.post('/register', registerUser);
 
-// Route de connexion
+// ✅ Route de connexion
 router.post('/login', loginUser);
 
-// Route pour récupérer le profil utilisateur (protégée)
+// ✅ Route pour récupérer le profil utilisateur (protégée)
 router.get('/profile', protect, getUserProfile);
 
-// Route pour récupérer un utilisateur par ID
-router.get('/:id', getUserById);
+// ✅ Route pour récupérer un utilisateur par ID
+router.get('/:id', protect, getUserById); // 🔥 Protégée également
 
 export default router;

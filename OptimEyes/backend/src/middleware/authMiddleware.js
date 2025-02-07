@@ -9,21 +9,26 @@ const protect = asyncHandler(async (req, res, next) => {
         try {
             token = req.headers.authorization.split(' ')[1];
 
+            // 🔥 Vérification avec le bon secret
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             req.user = await User.findById(decoded.id).select('-password');
 
+            if (!req.user) {
+                res.status(401);
+                throw new Error('Utilisateur non trouvé.');
+            }
+
             next();
         } catch (error) {
+            console.error("❌ Erreur de token:", error.message);
             res.status(401);
             throw new Error('Non autorisé, token invalide.');
         }
-    }
-
-    if (!token) {
+    } else {
         res.status(401);
-        throw new Error('Non autorisé, aucun token.');
+        throw new Error('Non autorisé, aucun token fourni.');
     }
 });
 
-export { protect };  // 🚀 Il faut bien utiliser export SANS default
+export { protect };

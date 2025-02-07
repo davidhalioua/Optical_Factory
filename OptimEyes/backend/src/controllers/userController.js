@@ -1,144 +1,98 @@
-import User from '../models/User.js';
 import asyncHandler from 'express-async-handler';
-import generateToken from '../utils/generateToken.js';
+import User from '../models/User.js';
+import generateToken from '../utils/generateToken.js'; // 🔥 Importation du token JWT
 
-// @desc    Inscription d'un utilisateur
-// @route   POST /api/users/register
-// @access  Public
-const registerUser = asyncHandler(async (req, res) => {
+// ✅ Récupérer tous les utilisateurs
+export const getAllUsers = asyncHandler(async (req, res) => {
+    console.log("📌 Requête reçue: GET /api/users");
+    const users = await User.find().select('-password'); // Exclut les mots de passe
+    res.json(users);
+});
+
+// ✅ Inscription utilisateur (avec génération du token)
+export const registerUser = asyncHandler(async (req, res) => {
+    console.log("📌 Requête reçue: POST /api/users/register", req.body);
+
     const { name, email, password } = req.body;
 
-    console.log("📌 Tentative d'inscription :", { name, email });
-
     if (!name || !email || !password) {
-        return res.status(400).json({ message: "Tous les champs sont requis" });
+        res.status(400);
+        throw new Error("❌ Tous les champs sont requis");
     }
 
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-        return res.status(400).json({ message: "Utilisateur déjà existant" });
+        console.log("⚠️ Utilisateur déjà existant:", email);
+        res.status(400);
+        throw new Error("Cet utilisateur existe déjà.");
     }
 
-    try {
-        const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password });
 
-        if (user) {
-            return res.status(201).json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                token: generateToken(user._id),
-            });
-        } else {
-            return res.status(400).json({ message: "Données invalides" });
-        }
-    } catch (error) {
-        console.error("❌ Erreur lors de l'inscription :", error.message);
-        return res.status(500).json({ message: "Erreur serveur" });
+    if (user) {
+        console.log("✅ Utilisateur créé:", user);
+        res.status(201).json({ 
+            _id: user._id, 
+            name: user.name, 
+            email: user.email, 
+            token: generateToken(user._id) // ✅ Génération du JWT
+        });
+    } else {
+        res.status(400);
+        throw new Error("❌ Données invalides.");
     }
 });
 
-// @desc    Connexion utilisateur
-// @route   POST /api/users/login
-// @access  Public
-const loginUser = asyncHandler(async (req, res) => {
+// ✅ Connexion utilisateur (avec génération du token)
+export const loginUser = asyncHandler(async (req, res) => {
+    console.log("📌 Requête reçue: POST /api/users/login", req.body);
+
     const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-    console.log("📌 Tentative de connexion :", { email });
-
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email et mot de passe requis" });
-    }
-
-    try {
-        const user = await User.findOne({ email });
-
-        if (user && (await user.matchPassword(password))) {
-            return res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                token: generateToken(user._id),
-            });
-        } else {
-            return res.status(401).json({ message: "Identifiants invalides" });
-        }
-    } catch (error) {
-        console.error("❌ Erreur lors de la connexion :", error.message);
-        return res.status(500).json({ message: "Erreur serveur" });
+    if (user && (await user.matchPassword(password))) {
+        console.log("✅ Connexion réussie:", user.email);
+        res.json({ 
+            _id: user._id, 
+            name: user.name, 
+            email: user.email,
+            token: generateToken(user._id) // ✅ Génération du JWT
+        });
+    } else {
+        console.log("❌ Identifiants invalides pour:", email);
+        res.status(401);
+        throw new Error("Identifiants invalides.");
     }
 });
 
-// @desc    Récupérer le profil utilisateur
-// @route   GET /api/users/profile
-// @access  Private
-const getUserProfile = asyncHandler(async (req, res) => {
-    console.log("📌 Récupération du profil pour l'ID :", req.user._id);
+// ✅ Récupération du profil utilisateur (protégé par authentification)
+export const getUserProfile = asyncHandler(async (req, res) => {
+    console.log("📌 Requête reçue: GET /api/users/profile");
 
-    try {
-        const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id);
 
-        if (user) {
-            return res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-            });
-        } else {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération du profil :", error.message);
-        return res.status(500).json({ message: "Erreur serveur" });
+    if (user) {
+        res.json({ 
+            _id: user._id, 
+            name: user.name, 
+            email: user.email
+        });
+    } else {
+        res.status(404);
+        throw new Error("Utilisateur non trouvé.");
     }
 });
 
-// @desc    Test de l'API utilisateur
-// @route   GET /api/users/test
-// @access  Public
-const testUserRoute = asyncHandler(async (req, res) => {
-    console.log("📌 Route test utilisateur appelée");
-    return res.json({ message: "Test réussi" });
-});
+// ✅ Récupérer un utilisateur par ID
+export const getUserById = asyncHandler(async (req, res) => {
+    console.log(`📌 Requête reçue: GET /api/users/${req.params.id}`);
 
-// @desc    Récupérer tous les utilisateurs
-// @route   GET /api/users/all
-// @access  Private (Admin)
-const getAllUsers = asyncHandler(async (req, res) => {
-    console.log("📌 Récupération de tous les utilisateurs");
+    const user = await User.findById(req.params.id).select('-password');
 
-    try {
-        const users = await User.find({});
-        return res.json(users);
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération des utilisateurs :", error.message);
-        return res.status(500).json({ message: "Erreur serveur" });
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 });
-
-// @desc    Récupérer un utilisateur par son ID
-// @route   GET /api/users/:id
-// @access  Private (Admin)
-const getUserById = asyncHandler(async (req, res) => {
-    console.log("📌 Récupération de l'utilisateur ID :", req.params.id);
-
-    if (!req.params.id) {
-        return res.status(400).json({ message: "ID utilisateur requis" });
-    }
-
-    try {
-        const user = await User.findById(req.params.id);
-
-        if (user) {
-            return res.json(user);
-        } else {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération de l'utilisateur :", error.message);
-        return res.status(500).json({ message: "Erreur serveur" });
-    }
-});
-
-export { registerUser, loginUser, getUserProfile, testUserRoute, getAllUsers, getUserById };
