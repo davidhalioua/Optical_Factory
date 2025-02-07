@@ -1,9 +1,10 @@
-### **OptimEyes - Backend**
+
+# **🚀 OptimEyes - Backend**  
 Backend du projet **OptimEyes**, une plateforme de test et d'achat de lunettes en ligne.
 
 ---
 
-## **Installation & Configuration**
+## ** Installation & Configuration**
 
 ### 1️ **Cloner le projet**
 ```sh
@@ -34,8 +35,8 @@ npm start
 
 ---
 
-##  **Routes API**
-###  **API de l'authentification (Users)**
+## **📡 Routes API**
+### **🔐 API de l'authentification (Users)**
 | Méthode | Endpoint                  | Description |
 |---------|----------------------------|-------------|
 | `POST`  | `/api/users/register`      | Inscription d'un utilisateur |
@@ -55,7 +56,7 @@ npm start
 
 ---
 
-### 👓 **API Recommandations de lunettes**
+### **👓 API Recommandations de lunettes**
 | Méthode | Endpoint          | Description |
 |---------|------------------|-------------|
 | `GET`   | `/api/glasses`   | Récupérer toutes les lunettes disponibles |
@@ -63,7 +64,7 @@ npm start
 
 ---
 
-### 🤖 **API Chatbot & IA DeepSeek**
+### **🤖 API Chatbot & IA DeepSeek**
 | Méthode | Endpoint        | Description |
 |---------|----------------|-------------|
 | `POST`  | `/api/chat`     | Envoyer un message au chatbot (IA DeepSeek) |
@@ -94,24 +95,23 @@ npm start
 
 ---
 
-##  **Authentification & Sécurité**
-- Utilisation de **JWT** pour l'authentification.
-- Les routes protégées nécessitent un **token Bearer** dans l’en-tête :
-  ```sh
-  Authorization: Bearer <votre_token>
-  ```
+## **🔐 Sécurité**
+- **JWT pour l’authentification sécurisée**
+- **Middleware de protection (`authMiddleware.js`)**
+- **Hashage des mots de passe avec bcrypt**
+- **Protection des API avec validation des entrées utilisateur**
 
 ---
 
 ## 🧠 **DeepSeek AI**
 L’API utilise **DeepSeek** pour répondre aux questions des utilisateurs.
 
-###  **Installation du SDK**
+### **Installation du SDK**
 ```sh
 npm install openai
 ```
 
-###  **Exemple d’appel API à DeepSeek**
+### **Exemple d’appel API à DeepSeek**
 ```javascript
 import OpenAI from "openai";
 
@@ -141,15 +141,13 @@ console.log(response.choices[0]?.message?.content);
 
 ---
 
-##  **À Faire**
--  **Authentification JWT**
--  **Recommandations de lunettes**
--  **Connexion API DeepSeek**
--  **Gestion avancée des préférences utilisateurs**
--  **Intégration d’un paiement Stripe**
+## **📌 Ce qu'il reste à faire**
+- **💳 Intégration complète des paiements Stripe** pour finaliser les achats.  
+- **📊 Optimisation des recommandations IA** pour des suggestions plus précises.  
+- **🔍 Diagnostic visuel IA** pour détecter d’éventuels problèmes oculaires.  
+- **⚡ Performance & Scalabilité** pour une gestion plus rapide des requêtes.  
 
 ---
 
 ## 📩 **Support**
 Si vous rencontrez un problème, ouvrez une **issue** sur GitHub.
-
