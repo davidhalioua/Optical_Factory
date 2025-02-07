@@ -18,15 +18,9 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.get("/", (req, res) => {
-    res.send("✅ API is running...");
-});
-
 
 // Routes API
 app.use('/api/users', userRoutes);
-console.log("✅ Routes chargées !");
-
 app.use('/api/glasses', glassRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
@@ -34,14 +28,8 @@ app.use('/api/glasses', glassRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/cart', cartRoutes);
 
-
-
-
 // Serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur le port ${PORT}`);
-    console.log("🔍 Vérification : Express écoute bien sur ce port...");
 });
-
-
