@@ -162,8 +162,7 @@ Voici les principales requêtes à tester :
 
 ## ✅ TODO & Améliorations
 ✔ Ajouter des rôles utilisateur (Admin / Client)  
-✔ Intégrer Stripe pour le paiement en ligne  
 ✔ Ajouter des WebSockets pour les notifications  
-✔ Améliorer le moteur de recommandations avec IA  
+✔ Diagnostic personnalisé avec l’IA pour détecter d’éventuels problèmes oculaires
 
 ---
