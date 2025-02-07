@@ -1,168 +1,155 @@
-# 👀 OptimEyes - Backend
-
-Bienvenue dans le backend de **OptimEyes**, l'application de test et d'achat de lunettes en ligne. Ce backend gère l'authentification, les catalogues de lunettes, les commandes, les recommandations personnalisées et inclut un chatbot intelligent.
-
-## 🚀 Technologies utilisées
-- **Node.js** avec **Express.js** pour le serveur
-- **MongoDB** avec **Mongoose** pour la base de données
-- **JWT** pour l'authentification
-- **WebSockets** pour le chatbot en temps réel
-- **Postman** pour tester les API
+### **OptimEyes - Backend**
+Backend du projet **OptimEyes**, une plateforme de test et d'achat de lunettes en ligne.
 
 ---
 
-## 📌 Installation et Configuration
+## **Installation & Configuration**
 
-### 1️⃣ Prérequis
-Avant de commencer, assure-toi d'avoir :
-- Node.js installé (`>= 16.x`)
-- MongoDB Atlas ou une instance locale de MongoDB
-- Un fichier `.env` avec les variables requises
-
-### 2️⃣ Installation
-Clone le projet et installe les dépendances :
+### 1️ **Cloner le projet**
 ```sh
-# Cloner le repo
-git clone https://github.com/ton_repo/OptimEyes.git
+git clone https://github.com/ton-repo/OptimEyes.git
 cd OptimEyes/backend
+```
 
-# Installer les dépendances
+### 2️ **Installer les dépendances**
+```sh
 npm install
 ```
 
-### 3️⃣ Configuration de l'environnement
-Crée un fichier `.env` à la racine et ajoute :
-```env
-MONGO_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/optimeyes
-JWT_SECRET=supersecretkey
+### 3️ **Créer un fichier `.env`**
+Ajoute tes variables d’environnement dans **`.env`** :
+
+```
 PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/OptimEyes
+JWT_SECRET=ton_secret_jwt
+DEEPSEEK_API_KEY=ta_cle_api_deepseek
 ```
 
-### 4️⃣ Lancer le serveur
+### 4️ **Démarrer le serveur**
 ```sh
-npm run dev  # Démarre en mode développement
+npm start
 ```
-Le serveur est accessible sur **http://localhost:5000**.
+📌 Le backend tourne maintenant sur **`http://localhost:5000`**.
 
 ---
 
-## 📡 API Endpoints
+##  **Routes API**
+###  **API de l'authentification (Users)**
+| Méthode | Endpoint                  | Description |
+|---------|----------------------------|-------------|
+| `POST`  | `/api/users/register`      | Inscription d'un utilisateur |
+| `POST`  | `/api/users/login`         | Connexion et récupération du token JWT |
+| `GET`   | `/api/users/profile`       | Récupération du profil utilisateur **(🔒 Protégé JWT)** |
+| `GET`   | `/api/users/:id`           | Récupérer un utilisateur par ID **(🔒 Protégé JWT)** |
 
-### 🔐 Authentification
-| Méthode | Endpoint | Description |
-|---------|---------|-------------|
-| `POST`  | `/api/users/register` | Inscription utilisateur |
-| `POST`  | `/api/users/login` | Connexion utilisateur |
-| `GET`  | `/api/users/profile` | Profil utilisateur (nécessite un token) |
-
-### 🛍️ Catalogue de Lunettes
-| Méthode | Endpoint | Description |
-|---------|---------|-------------|
-| `GET`  | `/api/glasses` | Liste toutes les lunettes |
-| `POST`  | `/api/glasses` | Ajouter une nouvelle paire de lunettes (Admin) |
-| `GET`  | `/api/glasses/:id` | Obtenir une lunette spécifique |
-| `PUT`  | `/api/glasses/:id` | Modifier une lunette (Admin) |
-| `DELETE`  | `/api/glasses/:id` | Supprimer une lunette (Admin) |
-
-### 🔎 Recommandations de Lunettes
-| Méthode | Endpoint | Description |
-|---------|---------|-------------|
-| `POST`  | `/api/glasses/recommendations` | Obtenir des recommandations personnalisées selon l'âge, le genre et l'utilisation |
-
-#### Exemples de requête :
+ **Exemple de requête pour inscription :**
 ```json
 {
-  "gender": "Homme",
-  "age": 30,
-  "category": "Repos"
+  "name": "Lucas Dupont",
+  "email": "lucas.dupont@example.com",
+  "password": "MotDePasse456!"
 }
 ```
-#### Réponse attendue :
+ **Retourne un token JWT** pour l'authentification.
+
+---
+
+### 👓 **API Recommandations de lunettes**
+| Méthode | Endpoint          | Description |
+|---------|------------------|-------------|
+| `GET`   | `/api/glasses`   | Récupérer toutes les lunettes disponibles |
+| `POST`  | `/api/glasses`   | Ajouter une nouvelle paire de lunettes (admin) |
+
+---
+
+### 🤖 **API Chatbot & IA DeepSeek**
+| Méthode | Endpoint        | Description |
+|---------|----------------|-------------|
+| `POST`  | `/api/chat`     | Envoyer un message au chatbot (IA DeepSeek) |
+| `GET`   | `/api/chat/:id` | Récupérer l'historique du chat utilisateur |
+
+ **Exemple de requête au chatbot :**
 ```json
-[
-  {
-    "_id": "67a2996f02dc0dbeb000c3af",
-    "name": "Lunettes de repos",
-    "brand": "Ray-Ban",
-    "price": 120.99,
-    "description": "Lunettes idéales pour soulager la fatigue oculaire.",
-    "stock": 15,
-    "imageUrl": "https://example.com/rayban_repos.jpg",
-    "frameType": "Rectangulaire",
-    "material": "Métal",
-    "category": "Repos"
-  }
-]
+{
+  "userId": "67a5e647f609be7c29820e24",
+  "message": "Quelles lunettes recommandes-tu ?"
+}
 ```
-
-### 📦 Commandes
-| Méthode | Endpoint | Description |
-|---------|---------|-------------|
-| `POST`  | `/api/orders` | Créer une commande |
-| `GET`  | `/api/orders` | Voir toutes les commandes (Admin) |
-| `GET`  | `/api/orders/:id` | Voir une commande spécifique |
-| `PUT`  | `/api/orders/:id` | Mettre à jour le statut de la commande |
-| `DELETE`  | `/api/orders/:id` | Supprimer une commande |
-
-### 🤖 Chatbot
-| Méthode | Endpoint | Description |
-|---------|---------|-------------|
-| `POST`  | `/api/chat` | Envoyer un message au chatbot |
-| `GET`  | `/api/chat/history` | Récupérer l'historique des messages |
+ **Réponse possible :**
+```json
+{
+  "response": [
+    {
+      "name": "Lunettes de repos Blue Light",
+      "brand": "Ray-Ban",
+      "price": 120.99,
+      "description": "Filtrent la lumière bleue pour protéger vos yeux.",
+      "imageUrl": "https://example.com/blue-light.jpg"
+    }
+  ],
+  "type": "recommendation"
+}
+```
 
 ---
 
-## 🏗️ Utilisation pour le Frontend
-Le frontend peut interagir avec l'API en utilisant **Axios** ou **Fetch**.
+##  **Authentification & Sécurité**
+- Utilisation de **JWT** pour l'authentification.
+- Les routes protégées nécessitent un **token Bearer** dans l’en-tête :
+  ```sh
+  Authorization: Bearer <votre_token>
+  ```
 
-### 📌 Exemple : Connexion utilisateur avec Axios :
+---
+
+## 🧠 **DeepSeek AI**
+L’API utilise **DeepSeek** pour répondre aux questions des utilisateurs.
+
+###  **Installation du SDK**
+```sh
+npm install openai
+```
+
+###  **Exemple d’appel API à DeepSeek**
 ```javascript
-axios.post('http://localhost:5000/api/users/login', {
-  email: 'john@example.com',
-  password: 'test123'
-}).then(response => {
-  console.log('Token reçu:', response.data.token);
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+    baseURL: "https://api.deepseek.com",
+    apiKey: process.env.DEEPSEEK_API_KEY
 });
-```
 
-### 📌 Exemple : Récupérer les lunettes :
-```javascript
-fetch('http://localhost:5000/api/glasses')
-  .then(res => res.json())
-  .then(data => console.log(data));
-```
+const response = await openai.chat.completions.create({
+    model: "deepseek-chat",
+    messages: [{ role: "user", content: "Quels sont les meilleurs verres anti-lumière bleue ?" }]
+});
 
-### 📌 Exemple : Demander des recommandations :
-```javascript
-fetch('http://localhost:5000/api/glasses/recommendations', {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    gender: "Femme",
-    age: 25,
-    category: "Solaire"
-  })
-})
-  .then(res => res.json())
-  .then(data => console.log(data));
+console.log(response.choices[0]?.message?.content);
 ```
 
 ---
 
-## 📌 Tests avec Postman
-Voici les principales requêtes à tester :
-1️⃣ **Créer un utilisateur** ➜ `POST /api/users/register`  
-2️⃣ **Se connecter** ➜ `POST /api/users/login`  
-3️⃣ **Récupérer la liste des lunettes** ➜ `GET /api/glasses`  
-4️⃣ **Passer une commande** ➜ `POST /api/orders`  
-5️⃣ **Demander des recommandations** ➜ `POST /api/glasses/recommendations`  
-6️⃣ **Envoyer un message au chatbot** ➜ `POST /api/chat`  
+## 🛠 **Technologies Utilisées**
+- **Node.js** - Backend
+- **Express.js** - Framework serveur
+- **MongoDB** - Base de données NoSQL
+- **Mongoose** - ORM MongoDB
+- **JSON Web Token (JWT)** - Authentification sécurisée
+- **DeepSeek AI** - Chatbot intelligent
+- **Postman** - Tests API
 
 ---
 
-## ✅ TODO & Améliorations
-✔ Ajouter des rôles utilisateur (Admin / Client)  
-✔ Ajouter des WebSockets pour les notifications  
-✔ Diagnostic personnalisé avec l’IA pour détecter d’éventuels problèmes oculaires
+##  **À Faire**
+-  **Authentification JWT**
+-  **Recommandations de lunettes**
+-  **Connexion API DeepSeek**
+-  **Gestion avancée des préférences utilisateurs**
+-  **Intégration d’un paiement Stripe**
 
 ---
+
+## 📩 **Support**
+Si vous rencontrez un problème, ouvrez une **issue** sur GitHub.
+
