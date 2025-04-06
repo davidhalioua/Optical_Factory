@@ -8,14 +8,17 @@ import orderRoutes from './routes/orderRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 
+// Charger les variables d'environnement
 dotenv.config();
+
 const app = express();
 
-// Connexion à MongoDB
+// Connexion MongoDB
 connectDB();
 
-// Middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
@@ -24,11 +27,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/glasses', glassRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/glasses', glassRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/ai', aiRoutes);
 
-// Serveur
+// Lancement du serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur le port ${PORT}`);
