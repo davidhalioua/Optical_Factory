@@ -1,153 +1,187 @@
+# OptimEyes - Backend
 
-# **🚀 OptimEyes - Backend**  
-Backend du projet **OptimEyes**, une plateforme de test et d'achat de lunettes en ligne.
+Backend de l’application **OptimEyes**, une plateforme intelligente de diagnostic visuel et de recommandation de lunettes.
 
 ---
 
-## ** Installation & Configuration**
+## Installation & Configuration
 
-### 1️ **Cloner le projet**
-```sh
+### 1. Cloner le projet
+
+```bash
 git clone https://github.com/ton-repo/OptimEyes.git
 cd OptimEyes/backend
 ```
 
-### 2️ **Installer les dépendances**
-```sh
+### 2. Installer les dépendances
+
+```bash
 npm install
 ```
 
-### 3️ **Créer un fichier `.env`**
-Ajoute tes variables d’environnement dans **`.env`** :
+### 3. Créer le fichier `.env`
 
-```
+```env
 PORT=5000
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/OptimEyes
-JWT_SECRET=ton_secret_jwt
-DEEPSEEK_API_KEY=ta_cle_api_deepseek
+JWT_SECRET=ton_super_secret
+STRIPE_SECRET_KEY=clé_stripe
+PAYPAL_CLIENT_ID=clé_paypal
+PAYPAL_SECRET=secret_paypal
+
+ROBOFLOW_API_KEY=clé_roboflow
+ROBOFLOW_MODEL_URL=https://infer.roboflow.com/face-shape-detection-xkvuc/5
+ROBOFLOW_DIAG_MODEL_URL=https://classify.roboflow.com/diagnostic-visuel-yeux/1
+
+OPENROUTER_API_KEY=clé_openrouter 
 ```
 
-### 4️ **Démarrer le serveur**
-```sh
+### 4. Démarrer le serveur
+
+```bash
 npm start
 ```
-📌 Le backend tourne maintenant sur **`http://localhost:5000`**.
+
+Le backend tourne maintenant sur `http://localhost:5000`
 
 ---
 
-## **📡 Routes API**
-### **🔐 API de l'authentification (Users)**
-| Méthode | Endpoint                  | Description |
-|---------|----------------------------|-------------|
-| `POST`  | `/api/users/register`      | Inscription d'un utilisateur |
-| `POST`  | `/api/users/login`         | Connexion et récupération du token JWT |
-| `GET`   | `/api/users/profile`       | Récupération du profil utilisateur **(🔒 Protégé JWT)** |
-| `GET`   | `/api/users/:id`           | Récupérer un utilisateur par ID **(🔒 Protégé JWT)** |
+## Routes API
 
- **Exemple de requête pour inscription :**
-```json
-{
-  "name": "Lucas Dupont",
-  "email": "lucas.dupont@example.com",
-  "password": "MotDePasse456!"
-}
-```
- **Retourne un token JWT** pour l'authentification.
+### Authentification & Utilisateurs
+
+| Méthode | Endpoint             | Description |
+|--------|-----------------------|-------------|
+| POST   | `/api/users/register` | Inscription d’un nouvel utilisateur |
+| POST   | `/api/users/login`    | Connexion et récupération du token JWT |
+| GET    | `/api/users/profile`  | Récupération du profil utilisateur (🔒 JWT) |
+| GET    | `/api/users/:id`      | Récupération d’un utilisateur par ID (🔒 JWT) |
 
 ---
 
-### **👓 API Recommandations de lunettes**
-| Méthode | Endpoint          | Description |
-|---------|------------------|-------------|
-| `GET`   | `/api/glasses`   | Récupérer toutes les lunettes disponibles |
-| `POST`  | `/api/glasses`   | Ajouter une nouvelle paire de lunettes (admin) |
+### Lunettes
+
+| Méthode | Endpoint         | Description |
+|--------|-------------------|-------------|
+| GET    | `/api/glasses`    | Récupérer toutes les lunettes |
+| POST   | `/api/glasses`    | Ajouter une paire de lunettes |
+| GET    | `/api/glasses/:id`| Récupérer une paire par ID |
 
 ---
 
-### **🤖 API Chatbot & IA DeepSeek**
+### Recommandations intelligentes
+
+- Recommandations déclenchées automatiquement si le message contient "lunettes", "verres", "monture", etc.
+- Donne jusqu’à 3 suggestions depuis la base MongoDB.
+
+---
+
+### Chatbot ophtalmologique intelligent
+
+| Méthode | Endpoint     | Description |
+|--------|---------------|-------------|
+| POST   | `/api/chat`   | Envoyer un message au chatbot |
+| GET    | `/api/chat/history/:userId` | Récupérer l’historique du chatbot |
+
+#### Fonctionnement :
+
+- IA gratuite via OpenRouter (`Mistral` par défaut)
+- Fallback codé en dur si l’IA échoue
+- Spécialisé dans les **yeux, lunettes, ophtalmologie**
+
+---
+
+### Formulaire de santé
+
 | Méthode | Endpoint        | Description |
-|---------|----------------|-------------|
-| `POST`  | `/api/chat`     | Envoyer un message au chatbot (IA DeepSeek) |
-| `GET`   | `/api/chat/:id` | Récupérer l'historique du chat utilisateur |
+|--------|------------------|-------------|
+| POST   | `/api/form`      | Enregistrement du formulaire santé |
+| GET    | `/api/form/:id`  | Récupération du formulaire utilisateur |
 
- **Exemple de requête au chatbot :**
-```json
-{
-  "userId": "67a5e647f609be7c29820e24",
-  "message": "Quelles lunettes recommandes-tu ?"
-}
-```
- **Réponse possible :**
-```json
-{
-  "response": [
-    {
-      "name": "Lunettes de repos Blue Light",
-      "brand": "Ray-Ban",
-      "price": 120.99,
-      "description": "Filtrent la lumière bleue pour protéger vos yeux.",
-      "imageUrl": "https://example.com/blue-light.jpg"
-    }
-  ],
-  "type": "recommendation"
-}
-```
+Champs enregistrés : prénom, nom, âge, poids, taille, rhésus, allergies.
 
 ---
 
-## **🔐 Sécurité**
-- **JWT pour l’authentification sécurisée**
-- **Middleware de protection (`authMiddleware.js`)**
-- **Hashage des mots de passe avec bcrypt**
-- **Protection des API avec validation des entrées utilisateur**
+### Diagnostic visuel des yeux (IA)
+
+| Méthode | Endpoint                   | Description |
+|--------|-----------------------------|-------------|
+| POST   | `/api/ai/diagnosis`         | Diagnostic oculaire à partir d’une photo |
+
+#### Fonctionnement :
+
+1. Envoie l’image à **Roboflow**
+2. Si Roboflow ne détecte rien, **fallback IA intelligente** (OpenRouter)
+3. Si échec IA, **fallback codé en dur**
+4. Réponse : nom du diagnostic, probabilité, conseil personnalisé
 
 ---
 
-## 🧠 **DeepSeek AI**
-L’API utilise **DeepSeek** pour répondre aux questions des utilisateurs.
+### Détection de forme du visage
 
-### **Installation du SDK**
-```sh
-npm install openai
-```
+| Méthode | Endpoint                | Description |
+|--------|--------------------------|-------------|
+| POST   | `/api/face/shape`        | Analyse de la forme du visage via photo |
 
-### **Exemple d’appel API à DeepSeek**
-```javascript
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-    baseURL: "https://api.deepseek.com",
-    apiKey: process.env.DEEPSEEK_API_KEY
-});
-
-const response = await openai.chat.completions.create({
-    model: "deepseek-chat",
-    messages: [{ role: "user", content: "Quels sont les meilleurs verres anti-lumière bleue ?" }]
-});
-
-console.log(response.choices[0]?.message?.content);
-```
+- Utilise **Roboflow** uniquement (pas de Face++)
+- Résultat : forme détectée (ronde, ovale, carrée, etc.)
 
 ---
 
-## 🛠 **Technologies Utilisées**
-- **Node.js** - Backend
-- **Express.js** - Framework serveur
-- **MongoDB** - Base de données NoSQL
-- **Mongoose** - ORM MongoDB
-- **JSON Web Token (JWT)** - Authentification sécurisée
-- **DeepSeek AI** - Chatbot intelligent
-- **Postman** - Tests API
+## Sécurité & Authentification
+
+- Authentification via **JWT**
+- Routes protégées via `Bearer <token>`
+- Hash de mot de passe avec bcrypt
+- Stockage MongoDB sécurisé sur Atlas
 
 ---
 
-## **📌 Ce qu'il reste à faire**
-- **💳 Intégration complète des paiements Stripe** pour finaliser les achats.  
-- **📊 Optimisation des recommandations IA** pour des suggestions plus précises.  
-- **🔍 Diagnostic visuel IA** pour détecter d’éventuels problèmes oculaires.  
-- **⚡ Performance & Scalabilité** pour une gestion plus rapide des requêtes.  
+## Intelligence Artificielle
+
+### Moteur IA principal
+
+- Utilise l’API **OpenRouter** (modèle `mistral`)
+- Clé stockée dans `OPENROUTER_API_KEY`
+
+### Fallback intelligent
+
+- Si l’IA ne répond pas ou erreur :
+  - ✅ Réponses précodées basées sur mots-clés (ex : brûlure, picotement, rougeur)
+  - ✅ Réponses médicales informatives avec conseil de consulter
 
 ---
 
-## 📩 **Support**
-Si vous rencontrez un problème, ouvrez une **issue** sur GitHub.
+## Technologies utilisées
+
+- Node.js / Express
+- MongoDB + Mongoose
+- JWT
+- Roboflow (diagnostic et forme du visage)
+- OpenRouter (IA)
+- Stripe / PayPal (paiement)
+- Postman (tests)
+
+---
+
+## À faire / Bonus
+
+- Upload sécurisé d’images
+- Notifications & relances patients
+- Partage sécurisé de données santé
+- Mode expert IA
+- Tableau de bord des statistiques
+
+---
+
+## Tests API recommandés
+
+1. ✅ Création de compte
+2. ✅ Connexion utilisateur
+3. ✅ Remplir le formulaire santé
+4. ✅ Envoyer une image pour diagnostic (via Postman en form-data)
+5. ✅ Tester des questions au chatbot :  
+   - "J’ai les yeux secs et douloureux"  
+   - "Quels verres me recommandes-tu ?"  
+   - "J’ai les yeux qui grattent, que faire ?"
+
